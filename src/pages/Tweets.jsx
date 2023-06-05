@@ -53,7 +53,7 @@ const Tweets = () => {
     };
 
     fetchData();
-  }, [threeElementsToRender]);
+  }, [threeElementsToRender, users.length]);
 
   useEffect(() => {
     setShowText(false);
