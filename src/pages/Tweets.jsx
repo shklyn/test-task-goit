@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useLocation } from 'react-router-dom';
 import { useRef, useEffect, useState } from 'react';
 import { FaChevronLeft } from 'react-icons/fa';
@@ -15,25 +14,25 @@ import { fetchUsers } from 'api/api';
 
 const Tweets = () => {
   const [users, setUsers] = useState([]);
-  const [updatedUsers, setUpdatedUsers] = useState([]);
   const [showButton, setShowButton] = useState(false);
   const [threeElementsToRender, setThreeElementsToRender] = useState(3);
   const [showText, setShowText] = useState(false);
   const [dataFromApi, setDataFromApi] = useState([]);
 
   const location = useLocation();
-
   const pathToBack = useRef(location.state?.from ?? '/');
 
   useEffect(() => {
-    try {
-      const getUsers = async () => {
+    const fetchData = async () => {
+      try {
         const { data } = await fetchUsers();
         if (!data.length) {
           Notify.error('Oops, something went wrong.');
           return;
         }
+
         setDataFromApi(data);
+
         const firstThreeElements = data.slice(0, threeElementsToRender);
         const filteredData = dataNormalizer(firstThreeElements);
 
@@ -43,33 +42,22 @@ const Tweets = () => {
         }
 
         setUsers(filteredData);
-
-        if (threeElementsToRender !== data.length) {
-          setShowButton(true);
-        } else if (users.length === data.length) {
-          setShowButton(false);
-        } else {
-          setShowButton(false);
+        setShowButton(threeElementsToRender < data.length);
+        if (users.length === data.length) {
           Notify.info("Oops! There's no more tweets");
         }
-      };
-      getUsers();
-    } catch (e) {
-      Notify.error('Oops, something went wrong.');
-      console.log(e.message);
-    }
+      } catch (e) {
+        Notify.error('Oops, something went wrong.');
+        console.log(e.message);
+      }
+    };
+
+    fetchData();
   }, [threeElementsToRender]);
 
   useEffect(() => {
     setShowText(false);
-    setShowButton(true);
-    setUpdatedUsers(users);
-
-    if (users.length < dataFromApi.length - 1) {
-      setShowButton(true);
-    } else {
-      setShowButton(false);
-    }
+    setShowButton(users.length < dataFromApi.length);
   }, [users, dataFromApi]);
 
   const dataNormalizer = arr => {
@@ -93,7 +81,7 @@ const Tweets = () => {
         Back
       </BackLink>
       <TweetsGallery>
-        {updatedUsers.map(({ id, user, tweets, followers, avatar }) => (
+        {users.map(({ id, user, tweets, followers, avatar }) => (
           <Tweet
             key={id}
             name={user}
@@ -101,10 +89,9 @@ const Tweets = () => {
             tweets={tweets}
             avatar={avatar}
             userId={id}
-          ></Tweet>
+          />
         ))}
       </TweetsGallery>
-
       {showButton && (
         <LoadMoreBtn type="button" onClick={counterForData}>
           Load More
@@ -112,7 +99,7 @@ const Tweets = () => {
       )}
       {showText && (
         <TitleIfNoFollowings>
-          Oops, it seems you still follow nobody.
+          Oops, it seems you still don't follow anybody.
         </TitleIfNoFollowings>
       )}
     </TweetsContainer>

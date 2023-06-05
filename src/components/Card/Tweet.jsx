@@ -19,38 +19,27 @@ import picture from '../../images/picturebgr.png';
 import circle from '../../images/ellipse.png';
 
 export const Tweet = ({ name, tweets, followers, avatar, userId }) => {
-  const user = JSON.parse(localStorage.getItem(`user${userId}`)) ?? false;
-  const userFollowing = user.following;
-  const [isFollowing, setIsFollowing] = useState(userFollowing);
+  const user = JSON.parse(localStorage.getItem(`user${userId}`)) ?? { following: false };
+  const [isFollowing, setIsFollowing] = useState(user.following);
 
-  const handleBtn = userId => {
-    const userObj = { userId, following: !isFollowing };
+  const handleBtn = () => {
+    const userObj = { following: !isFollowing };
     localStorage.setItem(`user${userId}`, JSON.stringify(userObj));
 
-    const userData = JSON.parse(localStorage.getItem(`user${userId}`));
+    setIsFollowing(!isFollowing);
 
-    setIsFollowing(userData.following);
+    const localFollowingUsers = JSON.parse(localStorage.getItem('followingUsers')) || [];
 
-    const localFollowingUsers = JSON.parse(
-      localStorage.getItem(`followingUsers`)
-    );
-
-    if (
-      isFollowing &&
-      JSON.parse(localStorage.getItem('followingUsers')).includes(userId)
-    ) {
+    if (isFollowing) {
       const index = localFollowingUsers.indexOf(userId);
-      localFollowingUsers.splice(index, 1);
-      const newArr = Array.from(new Set(localFollowingUsers));
-      localStorage.setItem('followingUsers', JSON.stringify(newArr));
+      if (index > -1) {
+        localFollowingUsers.splice(index, 1);
+      }
     } else {
       localFollowingUsers.push(userId);
-
-      localStorage.setItem(
-        'followingUsers',
-        JSON.stringify(localFollowingUsers)
-      );
     }
+
+    localStorage.setItem('followingUsers', JSON.stringify(localFollowingUsers));
   };
 
   const transformFollowersNumber = number => {
@@ -68,12 +57,12 @@ export const Tweet = ({ name, tweets, followers, avatar, userId }) => {
     <TweetBox>
       <ContentBox>
         <ImageBox>
-          <Logo src={logo} alt="logo" width="76" height="20"></Logo>
-          <img src={picture} alt="background" width="308" height="168"></img>
+          <Logo src={logo} alt="logo" width="76" height="20" />
+          <img src={picture} alt="background" width="308" height="168" />
         </ImageBox>
-        <Line></Line>
+        <Line />
         <AvatarBox>
-          <Circle src={circle} alt="circle"></Circle>
+          <Circle src={circle} alt="circle" />
           <Avatar src={avatar} alt="avatar" />
         </AvatarBox>
         <DataList>
@@ -85,21 +74,14 @@ export const Tweet = ({ name, tweets, followers, avatar, userId }) => {
           </DataItem>
           <DataItem>
             <p>
-              {isFollowing
-                ? transformFollowersNumber(followers + 1)
-                : transformFollowersNumber(followers)}{' '}
-              Followers
+              {transformFollowersNumber(isFollowing ? followers + 1 : followers)} Followers
             </p>
           </DataItem>
         </DataList>
         {isFollowing ? (
-          <ButtonFollowing onClick={() => handleBtn(userId)}>
-            Following
-          </ButtonFollowing>
+          <ButtonFollowing onClick={handleBtn}>Following</ButtonFollowing>
         ) : (
-          <Button type="button" onClick={() => handleBtn(userId)}>
-            Follow
-          </Button>
+          <Button type="button" onClick={handleBtn}>Follow</Button>
         )}
       </ContentBox>
     </TweetBox>
