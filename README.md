@@ -1,5 +1,4 @@
-# test-task-goit
-Tweet Card Interactive Component
+# Tweet Card Interactive Component
 
 This project is aimed at creating tweet cards with interactive functionality. The tweet cards can be in two states: "Follow" and "Following". When the user clicks the Follow button, the button text changes to "Following", the button color is updated, and the follower count increases by one.
 
