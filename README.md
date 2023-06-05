@@ -1,6 +1,8 @@
 # test-task-goit
 Tweet Card Interactive Component
+
 This project is aimed at creating tweet cards with interactive functionality. The tweet cards can be in two states: "Follow" and "Following". When the user clicks the Follow button, the button text changes to "Following", the button color is updated, and the follower count increases by one.
+
 
 Features
 Interactive tweet cards with Follow and Following states
@@ -9,7 +11,9 @@ Error-free console in the browser
 Implementation in native JavaScript or React with bundlers
 Preserving the final user action result even after page refresh
 Reverting the button text, color, and follower count on subsequent clicks
+
 Technical Requirements
+
 Use the provided design to implement user cards
 Upon clicking the Follow button, the text should change to "Following" and the button color should update
 Add your own follower count to the initial follower count (e.g., from 100,500 to 100,501)
